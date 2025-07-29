@@ -43,39 +43,36 @@ class EverisFridayState extends State<EverisFridayApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Everis Fridays Pub',
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('Everis Fridays Pub'),
-          backgroundColor: Color.fromARGB(255, 109, 6, 137),
-        ),
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Expanded(child: _buildPubs()),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Everis Fridays Pub'),
+        backgroundColor: Color.fromARGB(255, 109, 6, 137),
+      ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Expanded(child: _buildPubs()),
 
-            // Botón para navegar a AffordablePubsScreen
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.black,
-                  foregroundColor: Colors.purple,
-                ),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => AffordablePubsScreen(),
-                    ),
-                  );
-                },
-                child: Text('Show Affordable Pubs'),
+          // Botón para navegar a AffordablePubsScreen
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.black,
+                foregroundColor: const Color.fromARGB(255, 217, 0, 255),
               ),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AffordablePubsScreen(),
+                  ),
+                );
+              },
+              child: Text('Show Affordable Pubs'),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
