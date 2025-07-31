@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:everis_fridays_pubs_app/pub_card.dart';
+import 'package:everis_fridays_pubs_app/models/pubs.dart';
 
 class AffordablePubsScreen extends StatefulWidget {
   @override
@@ -8,7 +10,7 @@ class AffordablePubsScreen extends StatefulWidget {
 }
 
 class _AffordablePubsScreenState extends State<AffordablePubsScreen> {
-  List<dynamic> pubs = [];
+  List<Pubs> pubs = [];
   bool isLoading = true;
   bool _sortAscending = true;
 
@@ -35,21 +37,24 @@ class _AffordablePubsScreenState extends State<AffordablePubsScreen> {
     if (response.statusCode == 200) {
       final List<dynamic> data = json.decode(response.body);
       setState(() {
-        pubs = data;
+        pubs = data.map((json) => Pubs.fromJson(json)).toList();
         isLoading = false;
       });
     } else {
       setState(() {
         isLoading = false;
       });
-      print("Failed to load pubs: ${response.statusCode}");
+      print('Failed to load pubs: ${response.statusCode}');
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Affordable Pubs')),
+      appBar: AppBar(
+        title: const Text('Affordable Pubs'),
+        backgroundColor: const Color.fromARGB(255, 109, 6, 137),
+      ),
       body: Column(
         children: [
           Padding(
@@ -64,21 +69,18 @@ class _AffordablePubsScreenState extends State<AffordablePubsScreen> {
                 _sortAscending
                     ? 'Sort descending by Price'
                     : 'Sort ascending by Price',
+                style: const TextStyle(fontSize: 16),
               ),
             ),
           ),
           Expanded(
             child: isLoading
                 ? const Center(child: CircularProgressIndicator())
+                : pubs.isEmpty
+                ? const Center(child: Text("No pubs found"))
                 : ListView.builder(
                     itemCount: pubs.length,
-                    itemBuilder: (context, index) {
-                      final pub = pubs[index];
-                      return ListTile(
-                        title: Text(pub['name']),
-                        subtitle: Text('Price: €${pub['avgPrice']}'),
-                      );
-                    },
+                    itemBuilder: (context, index) => PubCard(pubs[index]),
                   ),
           ),
         ],
