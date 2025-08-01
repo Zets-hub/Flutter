@@ -8,32 +8,18 @@ import 'package:everis_fridays_pubs_app/pub_card.dart';
 import 'package:everis_fridays_pubs_app/models/pubs.dart';
 import 'package:everis_fridays_pubs_app/affordable_pubs_screen.dart';
 
-void main() => runApp(const MyApp());
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Everis Fridays Pub',
-      theme: ThemeData(primarySwatch: Colors.purple),
-      home: const EverisFridayApp(),
-    );
-  }
-}
+void main() => runApp(EverisFridayApp());
 
 class EverisFridayApp extends StatefulWidget {
-  const EverisFridayApp({super.key});
+  const EverisFridayApp({Key? key}) : super(key: key);
 
   @override
   EverisFridayState createState() => EverisFridayState();
 }
 
 class EverisFridayState extends State<EverisFridayApp> {
-  final List<Pubs> _listPubs = [];
+  final List<Pubs> _listPubs = <Pubs>[];
   late Future<List<Pubs>> futurePubs;
-  double? maxPrice;
 
   @override
   void initState() {
@@ -43,36 +29,41 @@ class EverisFridayState extends State<EverisFridayApp> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Everis Fridays Pub'),
-        backgroundColor: Color.fromARGB(255, 109, 6, 137),
-      ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Expanded(child: _buildPubs()),
+    return MaterialApp(
+      title: 'Everis Fridays Pub',
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text('Everis Fridays Pub'),
+          backgroundColor: Color.fromARGB(255, 92, 4, 169),
+        ),
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Expanded(child: _buildPubs()),
 
-          // Botón para navegar a AffordablePubsScreen
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.black,
-                foregroundColor: const Color.fromARGB(255, 217, 0, 255),
-              ),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => AffordablePubsScreen(),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Builder(
+                // ← This is the key change
+                builder: (buttonContext) => ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.black,
+                    foregroundColor: Colors.purpleAccent,
                   ),
-                );
-              },
-              child: Text('Show Affordable Pubs'),
+                  onPressed: () {
+                    Navigator.push(
+                      buttonContext, // ← Use the Builder's context
+                      MaterialPageRoute(
+                        builder: (context) => AffordablePubsScreen(),
+                      ),
+                    );
+                  },
+                  child: const Text('Show Affordable Pubs'),
+                ),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -97,13 +88,8 @@ class EverisFridayState extends State<EverisFridayApp> {
     );
   }
 
-  Future<List<Pubs>> getPubs(List<Pubs> _listPubs, {double? maxPrice}) async {
-    final Uri uri = maxPrice != null
-        ? Uri.parse(
-            'http://192.168.1.145:1338/api/pubs/affordable?maxPrice=$maxPrice',
-          )
-        : Uri.parse('http://192.168.1.145:1338/api/pubs/affordable');
-
+  Future<List<Pubs>> getPubs(List<Pubs> _listPubs) async {
+    final Uri uri = Uri.parse('http://192.168.1.145:1338/api/pubs');
     final Response response = await get(uri);
     if (response.statusCode == 200) {
       List<dynamic> pubsListRaw = jsonDecode(response.body);
@@ -113,7 +99,7 @@ class EverisFridayState extends State<EverisFridayApp> {
       }
       return _listPubs;
     } else {
-      throw Exception('Failed to load data');
+      throw Exception('Failed to load data: ${response.statusCode}');
     }
   }
 }
