@@ -44,7 +44,6 @@ class EverisFridayState extends State<EverisFridayApp> {
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Builder(
-                // ← This is the key change
                 builder: (buttonContext) => ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.black,
@@ -52,7 +51,7 @@ class EverisFridayState extends State<EverisFridayApp> {
                   ),
                   onPressed: () {
                     Navigator.push(
-                      buttonContext, // ← Use the Builder's context
+                      buttonContext,
                       MaterialPageRoute(
                         builder: (context) => AffordablePubsScreen(),
                       ),
